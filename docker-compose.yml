@@ -1,0 +1,104 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:14.1
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=django_project
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+
+
+  rabbitmq:
+    image: "rabbitmq:alpine"
+    container_name: rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  django:
+    build:
+      context: .
+      dockerfile: docker/production.Dockerfile
+    container_name: django
+    command: ./docker/web_entrypoint.sh
+    environment:
+      - DATABASE_URL=psql://user:password@db:5432/django_project
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+    restart: on-failure
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+
+  celery:
+    build:
+      context: .
+      dockerfile: docker/production.Dockerfile
+    # command: celery -A django_project.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
+    container_name: worker
+    command: ./docker/celery_entrypoint.sh
+    environment:
+      - DATABASE_URL=psql://user:password@db:5432/django_project
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+    restart: on-failure
+
+  beats:
+    build:
+      context: .
+      dockerfile: docker/production.Dockerfile
+    # command: celery -A django_project.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    container_name: beats
+    command: ./docker/beats_entrypoint.sh
+    environment:
+      - DATABASE_URL=psql://user:password@db:5432/django_project
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+    restart: on-failure
+
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./staticfiles:/staticfiles
+    depends_on:
+      - django
+    restart: on-failure
+
+
+volumes:
+    postgres-data:
+    redis-data:
+
+
