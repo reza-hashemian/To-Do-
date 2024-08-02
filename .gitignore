@@ -8,6 +8,7 @@ __pycache__/
 
 # static file
 staticfiles
+media
 
 # pycharm
 .idea/
