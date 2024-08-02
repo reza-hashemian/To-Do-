@@ -18,6 +18,7 @@ LOCAL_APPS = [
     'django_project.common.apps.CommonConfig',
     'django_project.users.apps.UsersConfig',
     'django_project.authentication.apps.AuthenticationConfig',
+    'django_project.ToDo.apps.TodoConfig',
 ]
 
 THIRD_PARTY_APPS = [
