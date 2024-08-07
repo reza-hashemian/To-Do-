@@ -40,10 +40,6 @@ class CommentStack(admin.StackedInline):
     extra = 1
 
 
-class ChecklistItemStack(admin.StackedInline):
-    model = ChecklistItem
-    raw_id_fields = ['user_that_should_done']
-    extra = 1
 
 
 class AttachmentsStack(admin.StackedInline):
@@ -61,7 +57,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_filter = ['status']
     filter_horizontal = ['label']
     raw_id_fields = ['todolist']
-    inlines = [CommentStack, ChecklistItemStack,
+    inlines = [CommentStack,
                AttachmentsStack]
 
 
@@ -92,5 +88,5 @@ class EmojiAdmin(admin.ModelAdmin):
 class ChecklistItemAdmin(admin.ModelAdmin):
     list_display = ['description', 'is_completed']
     list_per_page = 20
-    raw_id_fields = ['task', 'user_that_should_done', 'owner']
+    raw_id_fields = ['task']
 
