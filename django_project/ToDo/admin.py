@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Task, ToDoList, MemberJoined,
+from .models import (Task, ToDoList,
                      ChecklistItem, Comment, Attachments,
                      Label, Emoji, Board)
 
@@ -13,10 +13,6 @@ class BoardAdmin(admin.ModelAdmin):
     list_display_links = ['name']
 
 
-class MemberJoinStack(admin.StackedInline):
-    model = MemberJoined
-    extra = 1
-
 
 @admin.register(ToDoList)
 class ToDoListAdmin(admin.ModelAdmin):
@@ -24,7 +20,6 @@ class ToDoListAdmin(admin.ModelAdmin):
     list_editable = ['priority']
     list_per_page = 20
     search_fields = ['name', 'description', 'baseuser']
-    inlines = [MemberJoinStack]
     list_display_links = ['name']
 
 
@@ -47,7 +42,7 @@ class CommentStack(admin.StackedInline):
 
 class ChecklistItemStack(admin.StackedInline):
     model = ChecklistItem
-    raw_id_fields = ['owner', 'user_that_should_done']
+    raw_id_fields = ['user_that_should_done']
     extra = 1
 
 
@@ -91,11 +86,6 @@ class EmojiAdmin(admin.ModelAdmin):
     list_per_page = 20
     raw_id_fields = ['comment', 'user']
 
-
-@admin.register(MemberJoined)
-class MemberJoinedAdmin(admin.ModelAdmin):
-    list_display = ['id', 'baseuser', 'todolist']
-    list_per_page = 20
 
 
 @admin.register(ChecklistItem)
