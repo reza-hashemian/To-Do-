@@ -11,7 +11,7 @@ class Board(BaseModel):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     baseuser = models.ForeignKey(BaseUser, on_delete=models.CASCADE,
-                                    related_name='board', related_query_name='board_obj')
+                                    related_name='boards', related_query_name='board_obj')
 
     class Meta:
         unique_together = ('baseuser', 'name')

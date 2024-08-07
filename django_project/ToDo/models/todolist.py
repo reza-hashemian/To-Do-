@@ -29,8 +29,7 @@ class ToDoList(BaseModel):
                              choices=ColorChoice.choices)
     board = models.ForeignKey(Board, on_delete=models.CASCADE,
                               related_name='todolists', related_query_name='todolist')
-    members = models.ManyToManyField(BaseUser, through='MemberJoined',
-                                     related_name='members', related_query_name='member')
+
 
 
     class Meta:
@@ -41,9 +40,3 @@ class ToDoList(BaseModel):
         return f"{self.name}>>{self.board.__str__()}"
 
 
-class MemberJoined(models.Model):
-    created_at = models.DateTimeField(db_index=True, default=timezone.now)
-    baseuser = models.ForeignKey(BaseUser, on_delete=models.CASCADE)
-    todolist = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
-    def __str__(self):
-        return "{}_{}".format(self.baseuser.__str__(), self.todolist.__str__())

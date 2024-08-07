@@ -64,9 +64,6 @@ class ChecklistItem(models.Model):
     task = models.ForeignKey(Task, related_name='checklist_items', on_delete=models.CASCADE)
     description = models.CharField(max_length=200)
     is_completed = models.BooleanField(default=False)
-    user_that_should_done = models.ForeignKey(BaseUser, null=True,related_name='checklists',
-                                              related_query_name='checklist',
-                                              blank=True, on_delete=models.CASCADE)
     owner = models.ForeignKey(BaseUser, related_name='checklists_owner',
                               related_query_name='checklist_owner',
                               on_delete=models.CASCADE)
