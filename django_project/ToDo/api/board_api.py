@@ -1,12 +1,13 @@
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
-
+from drf_spectacular.utils import extend_schema
 from django_project.api.mixins import ApiAuthMixin
 
 from ..models.boards import Board
 
 
+@extend_schema(tags=['Board'])
 class BoardViewSetAPI(ApiAuthMixin, ModelViewSet):
     class BoardSerializer(ModelSerializer):
         class Meta:
